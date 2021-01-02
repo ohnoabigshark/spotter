@@ -1,0 +1,2 @@
+#Ignore local node module files#
+/node_modules

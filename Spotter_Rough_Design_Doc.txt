@@ -1,0 +1,31 @@
+UI
+	User Actions
+		Swipe left - skip
+		Swipe right - save listing, send message
+		Swipe up - show info
+		Swipe down - send message
+	Views
+		Admin Views
+			OAuth View
+				Facebook
+				OfferUp
+				Craigslist
+			Main login page
+		
+		Home page
+		
+		Classified Groups Views
+			Saved Groups
+
+		Classified Listing Views
+			Message View
+			Info View
+
+
+
+API
+
+
+
+
+SERVER
