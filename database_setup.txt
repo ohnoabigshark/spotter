@@ -21,7 +21,7 @@ create table watchlist (
 	listingIds array? -- how do we handle the array type?
 
 );
-
+<%= r.id %> - <%= r.dateScraped %> - <%= r.title %>
 
 create table seller (
 	id serial primary key,
