@@ -10,9 +10,6 @@ const client = new Client({
 
 client.connect();
 
-const pool = new client.Pool();
-
-
 app.use(express.static("public"));
 
 app.get("/", function(request, response) {
@@ -22,7 +19,7 @@ app.get("/", function(request, response) {
 
 app.get('/listing', function ( request, response ) { 
 	let sqlQuery = "select * from listing";
-	pool.query(sqlQuery, [1], (err, res) => {
+	client.query(sqlQuery, (err, res) => {
 		if ( err ) {
 			throw err
 		}
