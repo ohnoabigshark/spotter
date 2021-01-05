@@ -9,7 +9,8 @@ const client = new Client({
 });
 
 client.connect();
-const pool = new pg.Pool();
+
+const pool = new client.Pool();
 
 
 app.use(express.static("public"));
