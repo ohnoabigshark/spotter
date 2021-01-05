@@ -1,5 +1,9 @@
 const express = require("express");
 const app = express();
+var bodyParser = require('body-parser');
+var server = require('http').createServer(app);
+
+//postgreSQL conection
 const { Client } = require('pg');
 const client = new Client({
 	connectionString: process.env.DATABASE_URL,
@@ -10,7 +14,17 @@ const client = new Client({
 
 client.connect();
 
-app.use(express.static("public"));
+
+app.set('port', (process.env.PORT || 5000));
+
+app.use(express.static(__dirname + '/public'));
+app.use(express.static('public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// views is directory for all template files
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
 
 app.get("/", function(request, response) {
 	response.send("Server is up.");	
