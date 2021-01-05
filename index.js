@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const pg = require('pg');
+const pool = new pg.Pool();
 
 
 app.use(express.static("public"));
@@ -12,18 +13,13 @@ app.get("/", function(request, response) {
 
 app.get('/listing', function ( request, response ) { 
 	let sqlQuery = "select * from listing";
-	pg.connect(process.env.DATABASE_URL, function ( err, client, done ) {
-		client.query(sqlQuery, function(err, result) {
-			done();
-			if(err){
-				console.error(err); response.send("Error " + err);
-			}
-			else {
-				console.log(result.rows);
-				response.render('pages/db', { results: result.rows } );
-			}
+	pool.query(sqlQuery, [1], (err, res) => {
+		if ( err ) {
+			throw err
+		}
 
-		});
+		console.log(res.rows)
+		response.render('pages/db', {results: res.rows})
 	});
 });
 
