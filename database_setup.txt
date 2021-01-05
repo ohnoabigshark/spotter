@@ -1,5 +1,34 @@
 create table listing (
 	id serial primary key,
-	title text not null,
-	description text not null
-)
+	datePosted timestamp not null,
+	dateScraped timestamp not null,
+	dateLastViewed timestamp, -- when was the last time the user viewed the listing. this will be more complicated when we have multiple users accessing the same listings.
+	location text, -- can be null if location is not given
+	sellerId int not null, -- every listing has to have a seller
+	title text not null, -- all posts must have a title
+	description text, -- posts don't necessarily have to contain a description
+	price float?, -- do we want to use a float or different currency value here?
+	status int default 0
+);
+
+
+create table watchlist (
+	id serial primary key,
+	dateCreated timestamp not null,
+	searchTerm text not null,
+	listingIds array? -- how do we handle the array type?
+
+);
+
+
+create table seller (
+	id serial primary key,
+	phone text,
+	email text,
+	firstName text,
+	lastName text
+);
+
+/*create table user (
+	-- v2 feature
+);*/

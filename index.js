@@ -7,16 +7,23 @@ app.use(express.static("public"));
 
 app.get("/", function(request, response) {
 	response.send("Server is up.");	
-	let sqlQuery = "select * from noteentries where noteid = "+NOTE.currentNoteId+" order by entryid asc";
-	console.log(sqlQuery);
+});
+
+
+app.get('/listing', function ( request, response ) { 
+	let sqlQuery = "select * from listing";
 	pg.connect(process.env.DATABASE_URL, function ( err, client, done ) {
 		client.query(sqlQuery, function(err, result) {
-			//console.log(result.rows);
-			NOTE.entries = result.rows;
-			VASH.changeState(STATE.Note);
-			io.emit('openNote',NOTE.getData());
 			done();
-		}); 
+			if(err){
+				console.error(err); response.send("Error " + err);
+			}
+			else {
+				console.log(result.rows);
+				response.render('pages/db', { results: result.rows } );
+			}
+
+		});
 	});
 });
 
