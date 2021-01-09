@@ -7,10 +7,11 @@ const server = require('http').createServer(app);
 const { Client } = require('pg');
 const client = new Client({
     connectionString: process.env.DATABASE_URL || 'postgresql://postgres:dummy@localhost:5432/spotter',
-    ssl: false //process.env.DATABASE_URL ? true : false
-	/*ssl: {
+    ssl: {
 		rejectUnauthorized: false
-	}*/
+	} 
+    //process.env.DATABASE_URL ? true : false
+	
 });
 
 client.connect();
