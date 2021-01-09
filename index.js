@@ -1,15 +1,16 @@
 const express = require("express");
 const app = express();
-var bodyParser = require('body-parser');
-var server = require('http').createServer(app);
+const bodyParser = require('body-parser');
+const server = require('http').createServer(app);
 
 //postgreSQL conection
 const { Client } = require('pg');
 const client = new Client({
-	connectionString: process.env.DATABASE_URL,
-	ssl: {
+    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:dummy@localhost:5432/spotter',
+    ssl: process.env.DATABASE_URL ? true : false
+	/*ssl: {
 		rejectUnauthorized: false
-	}
+	}*/
 });
 
 client.connect();
