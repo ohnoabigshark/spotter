@@ -2,6 +2,11 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const server = require('http').createServer(app);
+const craigslistScraper = require('./craigslistScraper.js');
+const DBConnection = require('./DBConnection.js');
+const DBObject = require('./DBObject.js');
+const Listing = require('./Listing.js');
+const DBOperation = require('./DBOperation.js');
 
 //postgreSQL conection
 const { Client } = require('pg');
@@ -43,4 +48,17 @@ app.get('/listing', function ( request, response ) {
 	});
 });
 
+app.get('/scrapeTest', function ( request, response ) {
+
+	craigslistScraper.scrape();
+	response.render('pages/scrapeTest');
+});
+
+
 app.listen(process.env.PORT || 3000, () => console.log("Spotter: index.js started."));
+	//let t = new dbInterface('let see');
+	//console.log(t.test);
+const dbtest = new DBConnection();
+const listing = new Listing(1,"test");
+dbtest.save(listing);
+//craigslistScraper.scrape();
