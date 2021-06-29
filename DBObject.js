@@ -34,9 +34,11 @@ class DBObject {
 		return this.dbColumnNames.map( columnName => columnName + " = :" + columnName).join(", ");
 	}
 
+	//TODO: How do we figure out which statement to get and how to prepare it properly?
 	prepareSqlStatement ( statement ) {
 		//bind object key/value pairs to statement
 		this.dbColumnNames.forEach( el => statement.bind( el, this[el] ) );
+		return statement.getPreparedStatement();
 	}
 
 	getColumnsAsString ( str ) { 

@@ -70,6 +70,5 @@ listing.title = "A thing I am selling.";
 listing.description = "This thing is great. Buy it.";
 listing.price = "100";
 listing.service = "Facebook";
-console.log(listing.sqlInsertStatement.getPreparedStatement());
 dbtest.save(listing);
 //craigslistScraper.scrape();

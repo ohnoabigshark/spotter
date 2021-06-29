@@ -26,7 +26,9 @@ class SQLStatement {
 		while ( !result.done ) {
 			key = result.value;
 			value = this.bindMap.get(key);
-			preparedStatement = preparedStatement.replace(key,value);
+			if ( value != undefined ) {
+				preparedStatement = preparedStatement.replace(key,value);
+			}
 			result = bindMapIterator.next();
 		}
 		return preparedStatement;

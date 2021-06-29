@@ -21,7 +21,7 @@ DBConnection.prototype.save = function ( dbObject /* Takes an object */ ) {
 		if ( dbObject instanceof DBObject ) { //should DBObject try to track its state?
 			//need to check DB to see if object exists
 			if ( dbObject.isInDB() ) {
-				this.client.query(dbObject.sqlInsertStatement.getPreparedStatement(), (err, res) => {
+				this.client.query(dbObject.prepareSqlStatement(dbObject.sqlUpdateStatement), (err, res) => {
 					if ( err ) {
 						throw err
 					}
@@ -29,7 +29,8 @@ DBConnection.prototype.save = function ( dbObject /* Takes an object */ ) {
 				});
 				console.log("We have a NEW DBObject! Save it.");
 			} else {
-				this.client.query(dbObject.sqlUpdateStatement.getPreparedStatement(), (err, res) => {
+				console.log(dbObject.prepareSqlStatement(dbObject.sqlInsertStatement));
+				this.client.query(dbObject.prepareSqlStatement(dbObject.sqlInsertStatement), (err, res) => {
 					if ( err ) {
 						throw err
 					}
