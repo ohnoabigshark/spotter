@@ -9,16 +9,21 @@ class DBObject {
 			this.primaryKeyColumn = primaryKeyColumn;
 			//this.dbOperation = DBOperation.CREATE;
 
-			//TODO: Likely wnat to create a SQLStatement parent class to contain all these values and other helper functions
-			//Such as .bind;
 			this.sqlUpdateStatement = new SQLStatement("UPDATE "+dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn);
-			this.sqlDeleteStatement = new SQLStatement("DELETE FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+"= :primaryKeyValue");
+			this.sqlDeleteStatement = new SQLStatement("DELETE FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+" = :primaryKeyValue");
 			this.sqlInsertStatement = new SQLStatement("INSERT INTO "+dbTableName+" ("+this.getColumnsAsString()+") VALUES ("+this.buildBindParamList()+")");
 			this.sqlSelectStatement = new SQLStatement("SELECT "+this.getColumnsAsString()+" FROM "+dbTableName);
 		}
 		else {
 			throw("DBObject missing id.");
 		}
+	}
+
+	isInDB ( ) {
+		if ( this[this.primaryKeyColumn] > 0 ) {
+			return true;
+		}
+		return false;
 	}
 
 	buildBindParamList ( ) {
@@ -109,10 +114,12 @@ module.exports = DBObject;
 let obj = new DBObject("test",["test2"]);
 obj.sqlInsertStatement.bind("test2",'Flarfanooogen');
 
+console.log( obj.isInDB() + " | " +obj.primaryKeyColumn+ " | " +this[this.primaryKeyColumn] );
+
 console.log(obj.sqlSelectStatement);
 console.log(obj.sqlInsertStatement);
-console.log(obj.sqlUpdateStatement);
 console.log(obj.sqlDeleteStatement);
+console.log(obj.sqlDeleteStatement.getPreparedStatement());
 console.log(obj.sqlInsertStatement.getPreparedStatement());
 
 

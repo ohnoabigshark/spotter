@@ -20,10 +20,23 @@ DBConnection.prototype.save = function ( dbObject /* Takes an object */ ) {
 	if ( dbObject ) {
 		if ( dbObject instanceof DBObject ) { //should DBObject try to track its state?
 			//need to check DB to see if object exists
-				//if it does, save it
-				//if it doesn't, insert it
-			dbObject.getColumnsAsString();
-			console.log("We have a DBObject! Save it.");
+			if ( dbObject.isInDB() ) {
+				this.client.query(dbObject.sqlInsertStatement.getPreparedStatement(), (err, res) => {
+					if ( err ) {
+						throw err
+					}
+					console.log(res.rows)
+				});
+				console.log("We have a NEW DBObject! Save it.");
+			} else {
+				this.client.query(dbObject.sqlUpdateStatement.getPreparedStatement(), (err, res) => {
+					if ( err ) {
+						throw err
+					}
+					console.log(res.rows)
+				});
+				console.log("We have a DBObject! Save it.");
+			}
 		}
 		else
 			throw("Trying to save something that is not an instance of DBObject");

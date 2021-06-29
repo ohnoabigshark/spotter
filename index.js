@@ -59,6 +59,17 @@ app.listen(process.env.PORT || 3000, () => console.log("Spotter: index.js starte
 	//let t = new dbInterface('let see');
 	//console.log(t.test);
 const dbtest = new DBConnection();
-const listing = new Listing(1,"test");
+const listing = new Listing();
+/*
+["id","dateposted","datescraped","datelastviewed","location",
+  								"sellerid", "title", "description", "price", "status", "hash",
+  								"service", "serviceuid"];
+  								*/
+listing.location = "Boston";
+listing.title = "A thing I am selling.";
+listing.description = "This thing is great. Buy it.";
+listing.price = "100";
+listing.service = "Facebook";
+console.log(listing.sqlInsertStatement.getPreparedStatement());
 dbtest.save(listing);
 //craigslistScraper.scrape();

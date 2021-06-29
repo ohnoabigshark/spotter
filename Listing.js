@@ -8,7 +8,8 @@ class Listing extends DBObject {
   								"service", "serviceuid"];
 		const dbTableName = "listing";
 		super(dbTableName, dbColumnNames);
-		this._id = id;
+		if ( id )
+			this._id = id;
 	}
 
 	get id ( ) {
@@ -20,13 +21,13 @@ class Listing extends DBObject {
 		return this._id;
 	}
 
-	get name ( ) {
+	get title ( ) {
 		return this._name;
 	}
 
-	set name ( str ) {
+	set title ( str ) {
 		if ( typeof str !== 'string' )
-			throw ( "Cannot set Listing.name to "+str+" because it is not of type string.");
+			throw ( "Cannot set Listing.title to "+str+" because it is not of type string.");
 		//this.dbOperationUpdate();
 		this._name = str;
 	}
