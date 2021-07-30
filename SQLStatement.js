@@ -2,11 +2,11 @@ class SQLStatement {
 	constructor ( statement ) {
 		this.statement = statement;
 		this.bindMap = new Map();
+		this.bindVarRegex = /:[a-zA-Z0-9]+/g; //TODO: add underscores and dashes
 	}
 
 	bind ( key, value ) {
-		let regex = /:[a-zA-Z0-9]+/g;
-		let matches = this.statement.match(regex);
+		let matches = this.statement.match(this.bindVarRegex);
 		if ( typeof value === "string" ) {
 			value = value.replace("'","''")//TODO: Need to escape other chars.
 			value = "'"+value+"'"; 
@@ -30,6 +30,12 @@ class SQLStatement {
 				preparedStatement = preparedStatement.replace(key,value);
 			}
 			result = bindMapIterator.next();
+		}
+
+		//TODO: Remove unbound statements
+		let matches = this.statement.match(this.bindVarRegex);
+		if ( matches.find( el => el == ":"+key ) ) {
+			
 		}
 		return preparedStatement;
 	}

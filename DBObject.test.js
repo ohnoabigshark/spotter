@@ -1,29 +1,52 @@
 const DBObject = require('./DBObject.js');
 
-const pDbTableName = "listing";
-const fDbTableName = "";
-const pDbTableColumns = ["column1","column2"];
-const fDbTableColumns = [];
-const fNonStringDbTableColumns = [{},""];
-const pDbObject = new DBObject(pDbTableName,pDbTableColumns);
-
-
 test ('Create DBObject.', () => {
-	expect(new DBObject(pDbTableName,pDbTableColumns)).toStrictEqual(pDbObject);
+	//GIVEN
+	validDbTableName = "listing";
+	validDbTableColumns = ["column1","column2"];
+	//WHEN
+	validDbObject = new DBObject(validDbTableName, validDbTableColumns);
+	//THEN
+	expect(validDbObject).not.toBe(null);
 });
 
 test ('Create DBObject with dbTableName of length 0 throws error.', () => { 
-	expect(() => {new DBObject(fDbTableName,pDbTableColumns);}).toThrow();
+	//GIVEN
+	badTableName = "";
+	validDbTableColumns = ["column1","column2"];
+	//WHEN
+	expect(() => {new DBObject(badTableName,validDbTableColumns);})
+	//THEN
+	.toThrow();
 });
 
 test ('Create DBObject with dbColumns of length 0 throws error.', () => { 
-	expect(() => {new DBObject(pDbTableName,fDbTableColumns);}).toThrow();
+	//GIVEN
+	validDbTableName = "listing";
+	badTableColumns = [];
+	//WHEN
+	expect(() => {new DBObject(validDbTableName,badTableColumns);})
+	//THEN
+	.toThrow();
 });
 
 test ('Create DBObject with dbColumns with non string member throws error.', () => { 
-	expect(() => {new DBObject(pDbTableName,fNonStringDbTableColumns);}).toThrow();
+	//GIVEN
+	validDbTableName = "listing";
+	badTableColumns = [{},""];
+	//WHEN
+	expect(() => {new DBObject(validDbTableName,badTableColumns);})
+	//THEN
+	.toThrow();
 });
 
 test ('DBObject.getColumnsAsString().', () => {
-	expect(pDbObject.getColumnsAsString()).toBe("column1, column2");
+	//GIVEN
+	validDbTableName = "listing";
+	validDbTableColumns = ["column1","column2"];
+	validDbObject = new DBObject(validDbTableName, validDbTableColumns);
+	//THEN
+	expect(validDbObject.getColumnsAsString())
+	//WHEN
+	.toBe("column1, column2");
 })

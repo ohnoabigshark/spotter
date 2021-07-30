@@ -6,8 +6,7 @@ class DBObject {
 		if ( dbTableName && dbColumnNames ) {
 			this.dbTableName = dbTableName; //String
 			this.dbColumnNames = dbColumnNames; //Array
-			this.primaryKeyColumn = primaryKeyColumn;
-			//this.dbOperation = DBOperation.CREATE;
+			this.primaryKeyColumn = primaryKeyColumn ? primaryKeyColumn : "_id";
 
 			this.sqlUpdateStatement = new SQLStatement("UPDATE "+dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn);
 			this.sqlDeleteStatement = new SQLStatement("DELETE FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+" = :primaryKeyValue");
@@ -20,7 +19,7 @@ class DBObject {
 	}
 
 	isInDB ( ) {
-		if ( this[this.primaryKeyColumn] > 0 ) {
+		if ( this[this.primaryKeyColumn].length > 0 ) {
 			return true;
 		}
 		return false;
@@ -49,21 +48,6 @@ class DBObject {
 		return this.dbColumnNames.join(delimiter);
 	}
 
-	/*#dbOperationUpdate ( ) {
-		console.log("dbOperationUpdate called");
-		if ( this.dbOperation != DBOperation.CREATE )
-			this.dbOperation = DBOperation.UPDATE;
-	}
-
-	get dbOperation ( ) {
-		return this._dbOperation;
-	}
-
-	set dbOperation ( dbOperation ) {
-		if ( Object.values(DBOperation).includes(dbOperation) ) //if dbOperation is a compatible value
-			this._dbOperation = dbOperation;
-	}
-	*/
 	get dbTableName ( ) {
 		return this._dbTableName;
 	}
@@ -108,14 +92,21 @@ class DBObject {
 			throw ("primaryKeyColumn is of length: "+primaryKeyColumn.length+". Needs to be > 0.");
 		this._primaryKeyColumn = primaryKeyColumn; 
 	}
+
+	generateInsertStatement ( ) {
+		this.dbColumnNames.forEach( el => {
+			if ( this[el] )
+				this.sqlInsertStatement.bind( el, this[el] );
+		});
+		return this.sqlInsertStatement.getPreparedStatement();
+	}
 }
 module.exports = DBObject;
 
 
 //TODO: Below should be moved into test suite
-let obj = new DBObject("test",["test2"]);
-obj.sqlInsertStatement.bind("test2",'Flarfanooogen');
-
+let obj = new DBObject("test",["name","title"]);
+obj.name = "Name goes here";
 console.log( obj.isInDB() + " | " +obj.primaryKeyColumn+ " | " +this[this.primaryKeyColumn] );
 
 console.log(obj.sqlSelectStatement);
@@ -123,5 +114,6 @@ console.log(obj.sqlInsertStatement);
 console.log(obj.sqlDeleteStatement);
 console.log(obj.sqlDeleteStatement.getPreparedStatement());
 console.log(obj.sqlInsertStatement.getPreparedStatement());
+console.log(obj.generateInsertStatement());
 
 
