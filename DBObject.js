@@ -9,36 +9,40 @@ class DBObject {
 			this.dbColumnNames = dbColumnNames; //Array
 			this.primaryKeyColumn = primaryKeyColumn ? primaryKeyColumn : "id";
 
-			//TODO: implement getPrimaryKeyValue() to return this[this.getPrimaryKey]. Can add extra processing, if necessary
-			this.sqlUpdateStatement = new SQLStatement("UPDATE "+dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn+"=:"+this.primaryKeyColumn);
-			this.sqlDeleteStatement = new SQLStatement("DELETE FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+" = :primaryKeyValue");
-			this.sqlSelectStatement = new SQLStatement("SELECT "+this.getColumnsAsString()+" FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+"=:"+this.primaryKeyColumn);
-		}
-		else {
+		} else {
 			throw("DBObject missing id.");
 		}
 	}
 
+	get primaryKeyValue ( ) {
+		return this[this.primaryKeyColumn];
+	}
+
+	set primaryKeyValue ( id ) {
+		//TODO: Should check id ensure it is always a string.
+		this[this.primaryKeyColumn] = id;
+	}
+
 	isInDB ( ) {
-		let primaryKey = this[this.primaryKeyColumn];
-		if ( primaryKey && this[this.primaryKeyColumn].length > 0 ) {
+		let primaryKey = this.primaryKeyValue;
+		if ( primaryKey && primaryKey.length > 0 ) {
 			return true;
 		}
 		return false;
 	}
-
+	
 	buildBindParamList ( ) {
 		return this.dbColumnNames.map( columnName => ":"+columnName ).join(", ");
 	}
 
-	buildUpdatePairs ( ) {
+	buildUpdatePairs ( ) { //Do not want to include primaryKeyColumn here as we never want to change the value of it
 		return this.dbColumnNames.map( columnName => columnName + " = :" + columnName).join(", ");
 	}
 
-	//TODO: How do we figure out which statement to get and how to prepare it properly?
+	//TODO: SQL Statements should live in DBConnection
 	prepareSqlStatement ( statement ) {
 		//bind object key/value pairs to statement
-		statement.bind(this.primaryKeyColumn,this[this.primaryKeyColumn]);
+		statement.bind(this.primaryKeyColumn,this.primaryKeyValue);
 		this.dbColumnNames.forEach( el => statement.bind( el, this[el] ) );
 		return statement.getPreparedStatement();
 	}
@@ -77,7 +81,7 @@ class DBObject {
 		return this._dbColumnNames;
 	}
 
-	set dbColumnNames ( dbColumnNames ) { //TODO: Should we check for id in columnNames? should always have an id
+	set dbColumnNames ( dbColumnNames ) { 
 		if ( !Array.isArray(dbColumnNames) ) 
 			throw("setDbColumnNames: Could not set dbColumnNames because "+dbColumnNames+" is not of type Array.");
 		if ( dbColumnNames.length < 1 )
@@ -107,12 +111,35 @@ class DBObject {
 	}
 
 	generateInsertStatement ( ) {
-		this[this.primaryKeyColumn] = this[this.primaryKeyColumn] != undefined ? this[this.primaryKeyColumn] : this.generateHash();
-		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsWithValuesAsString()+") VALUES ('"+this[this.primaryKeyColumn]+"', "+this.buildBindParamList()+")");
-
+		this.primaryKeyValue = this.primaryKeyValue ? this.primaryKeyValue : this.generateHash();
+		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsWithValuesAsString()+") VALUES (:"+this.primaryKeyColumn+", "+this.buildBindParamList()+")");
+		
+		query.bind(this.primaryKeyColumn,this.primaryKeyValue);
 		this.dbColumnNames.forEach( el => {
 				query.bind( el, this[el] );
 		});
+		return query.getPreparedStatement();
+	}
+
+	generateUpdateStatement ( ) { //Returns SQL to update a SINGLE entry
+		let query = new SQLStatement("UPDATE "+this.dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn+"=:"+this.primaryKeyColumn);
+		
+		query.bind(this.primaryKeyColumn,this.primaryKeyValue);
+		this.dbColumnNames.forEach( el => {
+				query.bind( el, this[el] );
+		});
+		return query.getPreparedStatement();
+	}
+
+	generateDeleteStatement ( ) { //Returns SQL to delete a SINGLE entry
+		let query = new SQLStatement("DELETE FROM "+this.dbTableName+" WHERE "+this.primaryKeyColumn+" = :"+this.primaryKeyColumn);
+		query.bind(this.primaryKeyColumn,this.primaryKeyValue);
+		return query.getPreparedStatement();
+	}
+
+	generateSelectStatement ( ) { //Returns SQL to retrieve entry for a SINGLE object
+		let query = new SQLStatement("SELECT "+this.getColumnsAsString()+" FROM "+this.dbTableName+" WHERE "+this.primaryKeyColumn+"=:"+this.primaryKeyColumn);
+		query.bind(this.primaryKeyColumn,this.primaryKeyValue);
 		return query.getPreparedStatement();
 	}
 
