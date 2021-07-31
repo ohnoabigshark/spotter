@@ -1,17 +1,18 @@
 create table listing (
-	id serial primary key,
+	id uuid primary key,
 	datePosted timestamp not null,
 	dateScraped timestamp not null,
 	dateLastViewed timestamp, -- when was the last time the user viewed the listing. this will be more complicated when we have multiple users accessing the same listings.
 	location text, -- can be null if location is not given
-	sellerId int not null, -- every listing has to have a seller
+	sellerId uuid not null, -- every listing has to have a seller
 	title text not null, -- all posts must have a title
 	description text, -- posts don't necessarily have to contain a description
 	price money, -- do we want to use a float or different currency value here?
 	status int default 0,
-	service -- what is the type here?
-	serviceuid -- what is the type here?
+	scrapeconfig uuid not null
 );
+
+create type 
 
 sample query for listing
 insert into listing values (default, current_timestamp, current_timestamp, current_timestamp, 'Boston', 1, 'Dumbbell', 'Some fucking dumb bell', 1, 0);
@@ -38,6 +39,6 @@ create table seller (
 );*/
 
 create table serializableobjecttest (
-	id serial primary key,
+	id uuid primary key,
 	testString text
 );

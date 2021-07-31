@@ -9,7 +9,13 @@ class SQLStatement {
 		let matches = this.statement.match(this.bindVarRegex);
 		if ( typeof value === "string" ) {
 			value = value.replace("'","''")//TODO: Need to escape other chars.
-			value = "'"+value+"'"; 
+			//TODO: How do we handle null? There may be occasions where we want to pass null
+			if (value == "current_timestamp") {
+				//do nothing, want it to be raw value in query
+			}
+			else {
+				value = "'"+value+"'"; 
+			}
 		}
 
 		if ( matches.find( el => el == ":"+key ) ) {

@@ -116,6 +116,7 @@ class DBObject {
 
 
 	/*** SQL Generators ***/
+	//TODO: Write tests around statement generation as we are having weird issues around this
 	generateInsertStatement ( ) {
 		this.primaryKeyValue = this.primaryKeyValue ? this.primaryKeyValue : this.generateHash();
 		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsWithValuesAsString()+") VALUES (:"+this.primaryKeyColumn+", "+this.buildBindParamList()+")");

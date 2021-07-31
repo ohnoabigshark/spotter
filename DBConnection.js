@@ -3,9 +3,9 @@ const SQLStatement = require('./SQLStatement.js');
 const DBObject = require('./DBObject.js');
 
 class DBConnection {
-	constructor ( ) {
+	constructor ( ) { //TODO: Modify this so that we can connect to test DB
 		this.pool = new Pool ({
-			connectionString: process.env.DATABASE_URL || 'postgresql://postgres:dummy@localhost:5432/spotter',
+			connectionString: process.env.DATABASE_URL || 'postgresql://postgres:dummy@localhost:5432/spottertest',
 			ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 			idleTimeoutMillis: 30000,
   			connectionTimeoutMillis: 2000
@@ -32,6 +32,7 @@ class DBConnection {
 						console.log(dbObject.generateUpdateStatement());
 						const res = await client.query(dbObject.generateUpdateStatement());
 					} else {
+						console.log(dbObject.generateInsertStatement());
 						const res = await client.query(dbObject.generateInsertStatement());
 					}
 				}
