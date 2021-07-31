@@ -10,9 +10,9 @@ class DBObject {
 			this.primaryKeyColumn = primaryKeyColumn ? primaryKeyColumn : "id";
 
 			//TODO: implement getPrimaryKeyValue() to return this[this.getPrimaryKey]. Can add extra processing, if necessary
-			this.sqlUpdateStatement = new SQLStatement("UPDATE "+dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn+"="+this[this.primaryKeyColumn]);
+			this.sqlUpdateStatement = new SQLStatement("UPDATE "+dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn+"=:"+this.primaryKeyColumn);
 			this.sqlDeleteStatement = new SQLStatement("DELETE FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+" = :primaryKeyValue");
-			this.sqlSelectStatement = new SQLStatement("SELECT "+this.getColumnsAsString()+" FROM "+dbTableName);
+			this.sqlSelectStatement = new SQLStatement("SELECT "+this.getColumnsAsString()+" FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+"=:"+this.primaryKeyColumn);
 		}
 		else {
 			throw("DBObject missing id.");
@@ -38,6 +38,7 @@ class DBObject {
 	//TODO: How do we figure out which statement to get and how to prepare it properly?
 	prepareSqlStatement ( statement ) {
 		//bind object key/value pairs to statement
+		statement.bind(this.primaryKeyColumn,this[this.primaryKeyColumn]);
 		this.dbColumnNames.forEach( el => statement.bind( el, this[el] ) );
 		return statement.getPreparedStatement();
 	}
@@ -125,18 +126,6 @@ class DBObject {
 module.exports = DBObject;
 
 
-//TODO: Below should be moved into test suite
-let obj = new DBObject("test",["name","title"]);
-let obj2 = new DBObject("test",["name","title"]);
-let obj3 = new DBObject("test",["name","title"]);
-obj.name = "Name goes here";
-obj.title = "test";
-console.log( obj.isInDB() + " | " +obj.primaryKeyColumn+ " | " +this[this.primaryKeyColumn] );
 
-console.log(obj.sqlSelectStatement);
-console.log(obj.sqlInsertStatement);
-console.log(obj.sqlDeleteStatement);
-console.log(obj.sqlDeleteStatement.getPreparedStatement());
-console.log(obj.generateInsertStatement());
 
 

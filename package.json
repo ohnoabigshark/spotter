@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest",
+    "testHandles": "jest --detectOpenHandles",
     "dbObject": "node dbObject.js",
     "SQLStatement": "node SQLStatement.js"
   },

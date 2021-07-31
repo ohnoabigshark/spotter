@@ -1,3 +1,5 @@
 #Ignore local node module files#
 /node_modules
 /test_pages
+spotter.sublime-project
+spotter.sublime-workspace
