@@ -1,5 +1,4 @@
 const { Client } = require('pg');
-const DBOperation = require('./DBOperation.js');
 const DBObject = require('./DBObject.js');
 
 function DBConnection( /* We could pass connection information in here */ ) {

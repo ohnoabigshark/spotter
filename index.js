@@ -6,7 +6,6 @@ const craigslistScraper = require('./craigslistScraper.js');
 const DBConnection = require('./DBConnection.js');
 const DBObject = require('./DBObject.js');
 const Listing = require('./Listing.js');
-const DBOperation = require('./DBOperation.js');
 
 //postgreSQL conection
 const { Client } = require('pg');

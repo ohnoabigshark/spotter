@@ -3,7 +3,7 @@ const DBObject = require('./DBObject.js');
 class Listing extends DBObject {
 
   	constructor ( id ) {
-  		const dbColumnNames = ["id","dateposted","datescraped","datelastviewed","location",
+  		const dbColumnNames = ["dateposted","datescraped","datelastviewed","location",
   								"sellerid", "title", "description", "price", "status", "hash",
   								"service", "serviceuid"];
 		const dbTableName = "listing";

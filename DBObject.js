@@ -1,12 +1,12 @@
-const DBOperation = require('./DBOperation.js');
 const SQLStatement = require('./SQLStatement.js');
+murmurhash = require('murmurhash');
 
 class DBObject {
 	constructor ( dbTableName, dbColumnNames, primaryKeyColumn ) {  //TODO: All DBObjects need to know what the PK is
 		if ( dbTableName && dbColumnNames ) {
 			this.dbTableName = dbTableName; //String
 			this.dbColumnNames = dbColumnNames; //Array
-			this.primaryKeyColumn = primaryKeyColumn ? primaryKeyColumn : "_id";
+			this.primaryKeyColumn = primaryKeyColumn ? primaryKeyColumn : "id";
 
 			this.sqlUpdateStatement = new SQLStatement("UPDATE "+dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn);
 			this.sqlDeleteStatement = new SQLStatement("DELETE FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+" = :primaryKeyValue");
@@ -19,7 +19,8 @@ class DBObject {
 	}
 
 	isInDB ( ) {
-		if ( this[this.primaryKeyColumn].length > 0 ) {
+		let primaryKey = this[this.primaryKeyColumn];
+		if ( primaryKey && this[this.primaryKeyColumn].length > 0 ) {
 			return true;
 		}
 		return false;
@@ -100,12 +101,23 @@ class DBObject {
 		});
 		return this.sqlInsertStatement.getPreparedStatement();
 	}
+
+	//TODO: RUN MURMUR HASH
+	generateHash ( ) {
+		let reducer = (accumulator, currentValue) => accumulator + this[currentValue];
+		let objData = this.dbColumnNames.reduce(reducer,"");
+		console.log("OBJECT DATA:"+objData);
+		return murmurhash.v3(objData,this.dbTableName);
+	}
+
 }
 module.exports = DBObject;
 
 
 //TODO: Below should be moved into test suite
 let obj = new DBObject("test",["name","title"]);
+let obj2 = new DBObject("test",["name","title"]);
+let obj3 = new DBObject("test",["name","title"]);
 obj.name = "Name goes here";
 console.log( obj.isInDB() + " | " +obj.primaryKeyColumn+ " | " +this[this.primaryKeyColumn] );
 
