@@ -14,6 +14,8 @@ class DBObject {
 		}
 	}
 
+
+	/*** BASIC GET/SETS ***/
 	get primaryKeyValue ( ) {
 		return this[this.primaryKeyColumn];
 	}
@@ -21,48 +23,6 @@ class DBObject {
 	set primaryKeyValue ( id ) {
 		//TODO: Should check id ensure it is always a string.
 		this[this.primaryKeyColumn] = id;
-	}
-
-	isInDB ( ) {
-		let primaryKey = this.primaryKeyValue;
-		if ( primaryKey && primaryKey.length > 0 ) {
-			return true;
-		}
-		return false;
-	}
-	
-	buildBindParamList ( ) {
-		return this.dbColumnNames.map( columnName => ":"+columnName ).join(", ");
-	}
-
-	buildUpdatePairs ( ) { //Do not want to include primaryKeyColumn here as we never want to change the value of it
-		return this.dbColumnNames.map( columnName => columnName + " = :" + columnName).join(", ");
-	}
-
-	//TODO: SQL Statements should live in DBConnection
-	prepareSqlStatement ( statement ) {
-		//bind object key/value pairs to statement
-		statement.bind(this.primaryKeyColumn,this.primaryKeyValue);
-		this.dbColumnNames.forEach( el => statement.bind( el, this[el] ) );
-		return statement.getPreparedStatement();
-	}
-
-	getColumnsAsString ( str ) { 
-		let delimiter = ", ";
-		if ( str && typeof str === "string" ) { 
-			delimiter = str;
-		}
-		return this.dbColumnNames.join(delimiter);
-	}
-
-	getColumnsWithValuesAsString ( delimiter ) { 
-		if ( delimiter && typeof delimiter === "string" ) { 
-			
-		} else {
-			delimiter = ", ";
-		}
-		let fieldsWithValues = this.dbColumnNames.filter(fieldName => this[fieldName] != undefined || this[fieldName] != null)
-		return fieldsWithValues.join(delimiter);
 	}
 
 	get dbTableName ( ) {
@@ -110,6 +70,52 @@ class DBObject {
 		this._primaryKeyColumn = primaryKeyColumn; 
 	}
 
+	/*** HELPER METHODS ***/
+	isInDB ( ) {
+		let primaryKey = this.primaryKeyValue;
+		if ( primaryKey && primaryKey.length > 0 ) {
+			return true;
+		}
+		return false;
+	}
+	
+	buildBindParamList ( ) {
+		return this.dbColumnNames.map( columnName => ":"+columnName ).join(", ");
+	}
+
+	buildUpdatePairs ( ) { //Do not want to include primaryKeyColumn here as we never want to change the value of it
+		return this.dbColumnNames.map( columnName => columnName + " = :" + columnName).join(", ");
+	}
+
+	//TODO: SQL Statements should live in DBConnection
+	prepareSqlStatement ( statement ) {
+		//bind object key/value pairs to statement
+		statement.bind(this.primaryKeyColumn,this.primaryKeyValue);
+		this.dbColumnNames.forEach( el => statement.bind( el, this[el] ) );
+		return statement.getPreparedStatement();
+	}
+
+	getColumnsAsString ( str ) { 
+		let delimiter = ", ";
+		if ( str && typeof str === "string" ) { 
+			delimiter = str;
+		}
+		return this.dbColumnNames.join(delimiter);
+	}
+
+	getColumnsWithValuesAsString ( delimiter ) { 
+		if ( delimiter && typeof delimiter === "string" ) { 
+			
+		} else {
+			delimiter = ", ";
+		}
+		let fieldsWithValues = this.dbColumnNames.filter(fieldName => this[fieldName] != undefined || this[fieldName] != null)
+		return fieldsWithValues.join(delimiter);
+	}
+
+
+
+	/*** SQL Generators ***/
 	generateInsertStatement ( ) {
 		this.primaryKeyValue = this.primaryKeyValue ? this.primaryKeyValue : this.generateHash();
 		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsWithValuesAsString()+") VALUES (:"+this.primaryKeyColumn+", "+this.buildBindParamList()+")");
