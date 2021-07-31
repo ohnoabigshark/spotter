@@ -9,9 +9,9 @@ class DBObject {
 			this.dbColumnNames = dbColumnNames; //Array
 			this.primaryKeyColumn = primaryKeyColumn ? primaryKeyColumn : "id";
 
-			this.sqlUpdateStatement = new SQLStatement("UPDATE "+dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn);
+			//TODO: implement getPrimaryKeyValue() to return this[this.getPrimaryKey]. Can add extra processing, if necessary
+			this.sqlUpdateStatement = new SQLStatement("UPDATE "+dbTableName+" SET "+this.buildUpdatePairs()+" WHERE "+this.primaryKeyColumn+"="+this[this.primaryKeyColumn]);
 			this.sqlDeleteStatement = new SQLStatement("DELETE FROM "+dbTableName+" WHERE "+this.primaryKeyColumn+" = :primaryKeyValue");
-			this.sqlInsertStatement = new SQLStatement("INSERT INTO "+dbTableName+" ("+this.getColumnsAsString()+") VALUES ("+this.buildBindParamList()+")");
 			this.sqlSelectStatement = new SQLStatement("SELECT "+this.getColumnsAsString()+" FROM "+dbTableName);
 		}
 		else {
@@ -48,6 +48,16 @@ class DBObject {
 			delimiter = str;
 		}
 		return this.dbColumnNames.join(delimiter);
+	}
+
+	getColumnsWithValuesAsString ( delimiter ) { 
+		if ( delimiter && typeof delimiter === "string" ) { 
+			
+		} else {
+			delimiter = ", ";
+		}
+		let fieldsWithValues = this.dbColumnNames.filter(fieldName => this[fieldName] != undefined || this[fieldName] != null)
+		return fieldsWithValues.join(delimiter);
 	}
 
 	get dbTableName ( ) {
@@ -96,17 +106,18 @@ class DBObject {
 	}
 
 	generateInsertStatement ( ) {
+		this[this.primaryKeyColumn] = this[this.primaryKeyColumn] != undefined ? this[this.primaryKeyColumn] : this.generateHash();
+		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsWithValuesAsString()+") VALUES ('"+this[this.primaryKeyColumn]+"', "+this.buildBindParamList()+")");
+
 		this.dbColumnNames.forEach( el => {
-			if ( this[el] )
-				this.sqlInsertStatement.bind( el, this[el] );
+				query.bind( el, this[el] );
 		});
-		return this.sqlInsertStatement.getPreparedStatement();
+		return query.getPreparedStatement();
 	}
 
 	generateHash ( ) {
 		let reducer = (accumulator, currentValue) => accumulator + this[currentValue];
 		let objData = this.dbColumnNames.reduce(reducer,"");
-		console.log("OBJECT DATA:"+objData);
 		return uuidv5(objData,UUID_NAMESPACE);
 	}
 
@@ -119,13 +130,13 @@ let obj = new DBObject("test",["name","title"]);
 let obj2 = new DBObject("test",["name","title"]);
 let obj3 = new DBObject("test",["name","title"]);
 obj.name = "Name goes here";
+obj.title = "test";
 console.log( obj.isInDB() + " | " +obj.primaryKeyColumn+ " | " +this[this.primaryKeyColumn] );
 
 console.log(obj.sqlSelectStatement);
 console.log(obj.sqlInsertStatement);
 console.log(obj.sqlDeleteStatement);
 console.log(obj.sqlDeleteStatement.getPreparedStatement());
-console.log(obj.sqlInsertStatement.getPreparedStatement());
 console.log(obj.generateInsertStatement());
 
 

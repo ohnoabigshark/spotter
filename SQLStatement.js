@@ -26,8 +26,11 @@ class SQLStatement {
 		while ( !result.done ) {
 			key = result.value;
 			value = this.bindMap.get(key);
+			console.log("BIND to key: "+key+": "+value);
 			if ( value != undefined ) {
 				preparedStatement = preparedStatement.replace(key,value);
+			} else {
+				preparedStatement = preparedStatement.replace(", "+key,"");
 			}
 			result = bindMapIterator.next();
 		}

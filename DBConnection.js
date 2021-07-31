@@ -26,16 +26,15 @@ DBConnection.prototype.save = function ( dbObject /* Takes an object */ ) {
 					}
 					console.log(res.rows)
 				});
-				console.log("We have a NEW DBObject! Save it.");
+				console.log("We have a DBObject! Save it.");
 			} else {
-				console.log(dbObject.prepareSqlStatement(dbObject.sqlInsertStatement));
-				this.client.query(dbObject.prepareSqlStatement(dbObject.sqlInsertStatement), (err, res) => {
+				this.client.query(dbObject.generateInsertStatement(), (err, res) => {
 					if ( err ) {
 						throw err
 					}
 					console.log(res.rows)
 				});
-				console.log("We have a DBObject! Save it.");
+				console.log("We have a NEW DBObject! Save it.");
 			}
 		}
 		else
