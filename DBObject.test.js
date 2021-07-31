@@ -1,5 +1,4 @@
 const DBObject = require('./DBObject.js');
-murmurhash = require('murmurhash');
 
 
 test ('Create DBObject.', () => {
@@ -59,7 +58,7 @@ test ('DBObject.generateHash() success.', () => {
 	validDbTableName = "listing";
 	validDbTableColumns = ["column1","column2"];
 	validDbObject = new DBObject(validDbTableName, validDbTableColumns);
-	hash = "1512654344";
+	hash = "118cd9b3-7910-5b72-aeab-e148faa73c3e";
 
 	//THEN
 	expect(validDbObject.generateHash())

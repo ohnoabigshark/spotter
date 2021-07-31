@@ -1,5 +1,6 @@
+const { v1: uuidv1, v5: uuidv5 } = require('uuid');
 const SQLStatement = require('./SQLStatement.js');
-murmurhash = require('murmurhash');
+const UUID_NAMESPACE = "57b9d446-6803-4fd3-a876-657969e4fd67";
 
 class DBObject {
 	constructor ( dbTableName, dbColumnNames, primaryKeyColumn ) {  //TODO: All DBObjects need to know what the PK is
@@ -102,12 +103,11 @@ class DBObject {
 		return this.sqlInsertStatement.getPreparedStatement();
 	}
 
-	//TODO: RUN MURMUR HASH
 	generateHash ( ) {
 		let reducer = (accumulator, currentValue) => accumulator + this[currentValue];
 		let objData = this.dbColumnNames.reduce(reducer,"");
 		console.log("OBJECT DATA:"+objData);
-		return murmurhash.v3(objData,this.dbTableName);
+		return uuidv5(objData,UUID_NAMESPACE);
 	}
 
 }

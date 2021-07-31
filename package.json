@@ -24,12 +24,10 @@
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "jsdom": "^16.4.0",
-    "murmurhash": "^2.0.0",
-    "pg": "^8.5.1"
+    "pg": "^8.5.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "murmurhash": "^2.0.0",
-    
     "jest": "^26.6.3"
   }
 }
