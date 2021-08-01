@@ -10,8 +10,6 @@ class DBConnection {
 			idleTimeoutMillis: 30000,
   			connectionTimeoutMillis: 2000
 		});
-
-		
 	}
 
 	get pool ( ) {
@@ -19,6 +17,8 @@ class DBConnection {
 	}
 
 	set pool ( pool ) { //TODO: Do we need to do any error checking here?
+		if ( this._pool )
+			throw new Error ("pool is constant.");
 		this._pool = pool;
 	}
 
