@@ -16,6 +16,8 @@ class DBObject {
 
 
 	/*** BASIC GET/SETS ***/
+	//TODO: Write a nice tostring method!
+
 	get primaryKeyValue ( ) {
 		return this[this.primaryKeyColumn];
 	}
@@ -99,7 +101,7 @@ class DBObject {
 	//TODO: Write tests around statement generation as we are having weird issues around this
 	generateInsertStatement ( ) {
 		this.primaryKeyValue = this.primaryKeyValue ? this.primaryKeyValue : this.generateHash();
-		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsAsString()+") VALUES (:"+this.primaryKeyColumn+", "+this.buildBindParamList()+")");
+		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsAsString()+") VALUES (:"+this.primaryKeyColumn+", "+this.buildBindParamList()+") RETURNING "+this.primaryKeyColumn);
 		
 		query.bind(this.primaryKeyColumn,this.primaryKeyValue);
 		this.dbColumnNames.forEach( el => {

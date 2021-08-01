@@ -22,18 +22,22 @@ class DBConnection {
 		this._pool = pool;
 	}
 
-	async save ( dbObject ) { //TODO: Should this return the response?
+	async save ( dbObject, reload ) { //TODO: Should this return the response?
 		let client = await this.pool.connect();
+		//TODO: As part of the save step, we should reload values into the object with what comes back from DB?
 		try { 
 			if ( dbObject ) {
 				if ( dbObject instanceof DBObject ) { 
-					//need to check DB to see if object exists
 					if ( dbObject.isInDB() ) {
 						console.log(dbObject.generateUpdateStatement());
 						const res = await client.query(dbObject.generateUpdateStatement());
 					} else {
 						console.log(dbObject.generateInsertStatement());
 						const res = await client.query(dbObject.generateInsertStatement());
+						let uuid = res.rows[0][dbObject.primaryKeyColumn];
+						if ( reload && uuid ) {
+							await this.load(uuid,dbObject);
+						}  
 					}
 				}
 				else //TODO: Need to bubble this error up out of the try/catch. See load function for example.
@@ -61,11 +65,11 @@ class DBConnection {
 				error = new Error("No entry of "+dbObject.dbTableName+"."+dbObject.primaryKeyColumn+":"+dbObject.primaryKeyValue);
 			}
 		} finally {
-			if ( error ) {
-				throw error;
-			}
 			client.release();
 		}
+		if ( error ) {
+			throw error;
+		}	
 	}
 
 	async delete ( dbObject ) {

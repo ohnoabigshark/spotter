@@ -1,5 +1,6 @@
 const DBObject = require('../DBObject.js');
 const DBConnection = require('../DBConnection.js');
+const Listing = require('../Listing.js');
 
 
 test ('Create DBObject and save to DB.', async () => {
@@ -114,5 +115,30 @@ test ('Create DBObject, save to DB, make changes, save again, then load, then de
 	.rejects.toThrow();
 
 
+	dbtest.pool.end();
+});
+
+test ('Create Listing, save to DB, then load it.', async () => {
+	let dbtest = new DBConnection();
+	await dbtest.pool.query('DELETE FROM listing');
+
+	let originalListing = new Listing();
+	originalListing = new Listing();
+	originalListing.dateposted = "1999-01-08";
+	originalListing.datescraped = "1999-02-18";
+	originalListing.datelastviewed = "current_timestamp",
+	originalListing.location = "Brattleboro, VT";
+	originalListing.sellerid = "4df51cdd-ecd4-46d3-a24c-5b90a9f53b03";
+	originalListing.title = "Goat for sale.";
+	originalListing.description = "This is a good goat. Pretty nice. Brand new.";
+	originalListing.scrapeconfig = "68f6296d-81e3-463c-baec-1c846816560e";
+	
+	await dbtest.save(originalListing,true);
+	//WHEN
+	let loadedListing = new Listing();
+	await dbtest.load('a6d081dc-f25c-582e-a73d-ae4e685351ea',loadedListing);
+
+	//THEN
+	expect(originalListing).toEqual(loadedListing);
 	dbtest.pool.end();
 });

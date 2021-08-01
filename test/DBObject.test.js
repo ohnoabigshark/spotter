@@ -74,7 +74,7 @@ test ('Basic SQL generation tests.', () => {
 	validDbTableColumns = ["column1","column2"];
 	validDbObject = new DBObject(validDbTableName, validDbTableColumns);
 
-	let expectedInsertStatement = "INSERT INTO listing (id, column1, column2) VALUES ('118cd9b3-7910-5b72-aeab-e148faa73c3e', default, default)";
+	let expectedInsertStatement = "INSERT INTO listing (id, column1, column2) VALUES ('118cd9b3-7910-5b72-aeab-e148faa73c3e', default, default) RETURNING id";
 	let expectedSelectStatement = "SELECT column1, column2 FROM listing WHERE id='118cd9b3-7910-5b72-aeab-e148faa73c3e'";
 	let expectedDeleteStatement = "DELETE FROM listing WHERE id = '118cd9b3-7910-5b72-aeab-e148faa73c3e'";
 	let expectedUpdateStatement = "UPDATE listing SET column1 = default, column2 = default WHERE id='118cd9b3-7910-5b72-aeab-e148faa73c3e'";
@@ -98,7 +98,7 @@ test ('Test SQL generation for odd values.', () => {
 	validDbTableColumns = ["column1","column2"];
 	validDbObject = new DBObject(validDbTableName, validDbTableColumns);
 
-	let expectedInsertStatement = "INSERT INTO listing (id, column1, column2) VALUES ('2922730e-8c9f-5a11-bf00-975c983ccdc8', null, current_timestamp)";
+	let expectedInsertStatement = "INSERT INTO listing (id, column1, column2) VALUES ('2922730e-8c9f-5a11-bf00-975c983ccdc8', null, current_timestamp) RETURNING id";
 	let expectedSelectStatement = "SELECT column1, column2 FROM listing WHERE id='2922730e-8c9f-5a11-bf00-975c983ccdc8'";
 	let expectedDeleteStatement = "DELETE FROM listing WHERE id = '2922730e-8c9f-5a11-bf00-975c983ccdc8'";
 	let expectedUpdateStatement = "UPDATE listing SET column1 = null, column2 = current_timestamp WHERE id='2922730e-8c9f-5a11-bf00-975c983ccdc8'";
