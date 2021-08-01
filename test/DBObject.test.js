@@ -1,4 +1,4 @@
-const DBObject = require('./DBObject.js');
+const DBObject = require('../DBObject.js');
 
 
 test ('Create DBObject.', () => {

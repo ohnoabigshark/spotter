@@ -87,14 +87,6 @@ class DBObject {
 		return this.dbColumnNames.map( columnName => columnName + " = :" + columnName).join(", ");
 	}
 
-	//TODO: SQL Statements should live in DBConnection
-	prepareSqlStatement ( statement ) {
-		//bind object key/value pairs to statement
-		statement.bind(this.primaryKeyColumn,this.primaryKeyValue);
-		this.dbColumnNames.forEach( el => statement.bind( el, this[el] ) );
-		return statement.getPreparedStatement();
-	}
-
 	getColumnsAsString ( str ) { 
 		let delimiter = ", ";
 		if ( str && typeof str === "string" ) { 
@@ -103,6 +95,8 @@ class DBObject {
 		return this.dbColumnNames.join(delimiter);
 	}
 
+	//TODO: Is this function still needed when SQLStatement can handle the situations of null or undefined values?
+	//Would rather have the SQLStatement try to be smart
 	getColumnsWithValuesAsString ( delimiter ) { 
 		if ( delimiter && typeof delimiter === "string" ) { 
 			

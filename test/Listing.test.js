@@ -1,6 +1,5 @@
-const Listing = require("./Listing.js");
-
-const DBConnection = require('./DBConnection.js');
+const Listing = require("../Listing.js");
+const DBConnection = require('../DBConnection.js');
 
 test ( 'Create Listing.',  () => {
 	//GIVEN
