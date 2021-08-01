@@ -2,6 +2,9 @@ const { v1: uuidv1, v5: uuidv5 } = require('uuid');
 const SQLStatement = require('./SQLStatement.js');
 const UUID_NAMESPACE = "57b9d446-6803-4fd3-a876-657969e4fd67";
 
+//TODO: Revisit how we want hashing to work. There are potential issues with hashes actually being consistent due to how we generate them. May want to move to timestamp UUID or just generic namespaced UUID mechanism.
+//TODO: Refactor all source files into a src directory.
+
 class DBObject {
 	constructor ( dbTableName, dbColumnNames, primaryKeyColumn ) {  //TODO: All DBObjects need to know what the PK is
 		if ( dbTableName && dbColumnNames ) {
@@ -22,9 +25,12 @@ class DBObject {
 		return this[this.primaryKeyColumn];
 	}
 
-	set primaryKeyValue ( id ) {
-		//TODO: Should check id ensure it is always a string.
-		this[this.primaryKeyColumn] = id;
+	set primaryKeyValue ( value ) {
+		if ( typeof value !== "string" )
+			throw ("Could not set primaryKeyValue because "+value+" is not of type string.");
+		if ( value.length < 1 ) 
+			throw ("dbTableName is of length: "+value.length+". Needs to be > 0.");
+		this[this.primaryKeyColumn] = value;
 	}
 
 	get dbTableName ( ) {
@@ -98,7 +104,6 @@ class DBObject {
 	}
 
 	/*** SQL Generators ***/
-	//TODO: Write tests around statement generation as we are having weird issues around this
 	generateInsertStatement ( ) {
 		this.primaryKeyValue = this.primaryKeyValue ? this.primaryKeyValue : this.generateHash();
 		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsAsString()+") VALUES (:"+this.primaryKeyColumn+", "+this.buildBindParamList()+") RETURNING "+this.primaryKeyColumn);
