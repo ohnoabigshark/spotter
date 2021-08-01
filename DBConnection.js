@@ -54,18 +54,22 @@ class DBConnection {
 		}
 	}
 
-	//TODO: Do we want this to just return data for an entry and then handle object creation elsewhere?
-	async load ( id, dbObject ) { //TODO: Can we make this so we don't need to pass in the dbObject? Maybe just pass it a TYPE instsead? Sort of like Class injection
+	async load ( id, dbObject ) { 
 		let client = await this.pool.connect();
 		let error;
-		//TODO: Check if dbObject
 		try {
-			dbObject.primaryKeyValue = id;
-			const res = await client.query(dbObject.generateSelectStatement());
-			if ( res.rows.length == 1) {
-				Object.keys(res.rows[0]).forEach( el => dbObject[el] = res.rows[0][el]);
+			if ( dbObject ) {
+				if ( dbObject instanceof DBObject ) { 
+					dbObject.primaryKeyValue = id;
+					const res = await client.query(dbObject.generateSelectStatement());
+					if ( res.rows.length == 1) {
+						Object.keys(res.rows[0]).forEach( el => dbObject[el] = res.rows[0][el]);
+					} else {
+						error = new Error("No entry of "+dbObject.dbTableName+"."+dbObject.primaryKeyColumn+":"+dbObject.primaryKeyValue);
+					}
+				}
 			} else {
-				error = new Error("No entry of "+dbObject.dbTableName+"."+dbObject.primaryKeyColumn+":"+dbObject.primaryKeyValue);
+				error = new Error("Unable to call DBConnection.load without a valid DBObject.");
 			}
 		} finally {
 			client.release();
