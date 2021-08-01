@@ -6,7 +6,7 @@ const UUID_NAMESPACE = "57b9d446-6803-4fd3-a876-657969e4fd67";
 //TODO: Refactor all source files into a src directory.
 
 class DBObject {
-	constructor ( dbTableName, dbColumnNames, primaryKeyColumn ) {  //TODO: All DBObjects need to know what the PK is
+	constructor ( dbTableName, dbColumnNames, primaryKeyColumn ) { 
 		if ( dbTableName && dbColumnNames ) {
 			this.dbTableName = dbTableName; //String
 			this.dbColumnNames = dbColumnNames; //Array

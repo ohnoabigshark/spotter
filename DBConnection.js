@@ -22,15 +22,18 @@ class DBConnection {
 		this._pool = pool;
 	}
 
-	async save ( dbObject, reload ) { //TODO: Should this return the response?
+	//TODO: Add return values to save, load, delete that signify whether the operation was successful or not.
+	async save ( dbObject, reload ) { 
 		let client = await this.pool.connect();
-		//TODO: As part of the save step, we should reload values into the object with what comes back from DB?
 		try { 
 			if ( dbObject ) {
 				if ( dbObject instanceof DBObject ) { 
 					if ( dbObject.isInDB() ) {
 						console.log(dbObject.generateUpdateStatement());
 						const res = await client.query(dbObject.generateUpdateStatement());
+						if ( reload ) {
+							await this.load(dbObject.primaryKeyValue,dbObject);
+						}
 					} else {
 						console.log(dbObject.generateInsertStatement());
 						const res = await client.query(dbObject.generateInsertStatement());
