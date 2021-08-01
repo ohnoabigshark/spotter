@@ -142,3 +142,35 @@ test ('Create Listing, save to DB, then load it.', async () => {
 	expect(originalListing).toEqual(loadedListing);
 	dbtest.pool.end();
 });
+
+
+test ('FAILURE: Try to save non dbobject.', async () => {
+	let dbtest = new DBConnection();
+
+	let badObject = "";
+
+	await expect( dbtest.save(badObject) ).rejects.toThrow();
+	dbtest.pool.end();
+
+});
+
+test ('FAILURE: Try to load non dbobject.', async () => {
+	let dbtest = new DBConnection();
+
+	let badObject = "";
+
+	await expect( dbtest.load(badObject) ).rejects.toThrow();
+	dbtest.pool.end();
+
+});
+
+test ('FAILURE: Try to delete non dbobject.', async () => {
+	let dbtest = new DBConnection();
+
+	let badObject = "";
+
+	await expect( dbtest.delete(badObject) ).rejects.toThrow();
+	dbtest.pool.end();
+
+});
+

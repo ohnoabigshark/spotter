@@ -25,32 +25,31 @@ class DBConnection {
 	//TODO: Add return values to save, load, delete that signify whether the operation was successful or not.
 	async save ( dbObject, reload ) { 
 		let client = await this.pool.connect();
+		let error;
 		try { 
-			if ( dbObject ) {
-				if ( dbObject instanceof DBObject ) { 
-					if ( dbObject.isInDB() ) {
-						console.log(dbObject.generateUpdateStatement());
-						const res = await client.query(dbObject.generateUpdateStatement());
-						if ( reload ) {
-							await this.load(dbObject.primaryKeyValue,dbObject);
-						}
-					} else {
-						console.log(dbObject.generateInsertStatement());
-						const res = await client.query(dbObject.generateInsertStatement());
-						let uuid = res.rows[0][dbObject.primaryKeyColumn];
-						if ( reload && uuid ) {
-							await this.load(uuid,dbObject);
-						}  
+			if ( dbObject && dbObject instanceof DBObject ) {
+				if ( dbObject.isInDB() ) {
+					console.log(dbObject.generateUpdateStatement());
+					const res = await client.query(dbObject.generateUpdateStatement());
+					if ( reload ) {
+						await this.load(dbObject.primaryKeyValue,dbObject);
 					}
+				} else {
+					console.log(dbObject.generateInsertStatement());
+					const res = await client.query(dbObject.generateInsertStatement());
+					let uuid = res.rows[0][dbObject.primaryKeyColumn];
+					if ( reload && uuid ) {
+						await this.load(uuid,dbObject);
+					}  
 				}
-				else //TODO: Need to bubble this error up out of the try/catch. See load function for example.
-					throw("Trying to save something that is not an instance of DBObject");
-
 			} else {
-				console.log("Nothing to save.");
+				error = new Error("Trying to save something that is not an instance of DBObject");
 			}
 		} finally {
 			client.release();
+		}
+		if (error) {
+			throw error;
 		}
 	}
 
@@ -58,17 +57,16 @@ class DBConnection {
 		let client = await this.pool.connect();
 		let error;
 		try {
-			if ( dbObject ) {
-				if ( dbObject instanceof DBObject ) { 
-					dbObject.primaryKeyValue = id;
-					const res = await client.query(dbObject.generateSelectStatement());
-					if ( res.rows.length == 1) {
-						Object.keys(res.rows[0]).forEach( el => dbObject[el] = res.rows[0][el]);
-					} else {
-						error = new Error("No entry of "+dbObject.dbTableName+"."+dbObject.primaryKeyColumn+":"+dbObject.primaryKeyValue);
-					}
+			if ( dbObject && dbObject instanceof DBObject ) {
+				dbObject.primaryKeyValue = id;
+				const res = await client.query(dbObject.generateSelectStatement());
+				if ( res.rows.length == 1) {
+					Object.keys(res.rows[0]).forEach( el => dbObject[el] = res.rows[0][el]);
+				} else {
+					error = new Error("No entry of "+dbObject.dbTableName+"."+dbObject.primaryKeyColumn+":"+dbObject.primaryKeyValue);
 				}
-			} else {
+			}
+			else {
 				error = new Error("Unable to call DBConnection.load without a valid DBObject.");
 			}
 		} finally {
@@ -81,11 +79,18 @@ class DBConnection {
 
 	async delete ( dbObject ) {
 		let client = await this.pool.connect();
+		let error;
 		try {
-			const res = await client.query(dbObject.generateDeleteStatement());
-			console.log(res);
+			if ( dbObject && dbObject instanceof DBObject ) {
+				const res = await client.query(dbObject.generateDeleteStatement());
+			} else {
+				error = new Error("Unable to call DBConnection.delete without a valid DBObject.");
+			}
 		} finally {
 			client.release();
+		}
+		if (error) {
+			throw error;
 		}
 	}
 }
