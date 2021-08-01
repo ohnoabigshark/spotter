@@ -29,13 +29,11 @@ class DBConnection {
 		try { 
 			if ( dbObject && dbObject instanceof DBObject ) {
 				if ( dbObject.isInDB() ) {
-					console.log(dbObject.generateUpdateStatement());
 					const res = await client.query(dbObject.generateUpdateStatement());
 					if ( reload ) {
 						await this.load(dbObject.primaryKeyValue,dbObject);
 					}
 				} else {
-					console.log(dbObject.generateInsertStatement());
 					const res = await client.query(dbObject.generateInsertStatement());
 					let uuid = res.rows[0][dbObject.primaryKeyColumn];
 					if ( reload && uuid ) {
