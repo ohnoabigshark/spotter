@@ -95,25 +95,11 @@ class DBObject {
 		return this.dbColumnNames.join(delimiter);
 	}
 
-	//TODO: Is this function still needed when SQLStatement can handle the situations of null or undefined values?
-	//Would rather have the SQLStatement try to be smart
-	getColumnsWithValuesAsString ( delimiter ) { 
-		if ( delimiter && typeof delimiter === "string" ) { 
-			
-		} else {
-			delimiter = ", ";
-		}
-		let fieldsWithValues = this.dbColumnNames.filter(fieldName => this[fieldName] != undefined || this[fieldName] != null)
-		return fieldsWithValues.join(delimiter);
-	}
-
-
-
 	/*** SQL Generators ***/
 	//TODO: Write tests around statement generation as we are having weird issues around this
 	generateInsertStatement ( ) {
 		this.primaryKeyValue = this.primaryKeyValue ? this.primaryKeyValue : this.generateHash();
-		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsWithValuesAsString()+") VALUES (:"+this.primaryKeyColumn+", "+this.buildBindParamList()+")");
+		let query = new SQLStatement("INSERT INTO "+this.dbTableName+" ("+this.primaryKeyColumn+", "+this.getColumnsAsString()+") VALUES (:"+this.primaryKeyColumn+", "+this.buildBindParamList()+")");
 		
 		query.bind(this.primaryKeyColumn,this.primaryKeyValue);
 		this.dbColumnNames.forEach( el => {

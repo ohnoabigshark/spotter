@@ -29,8 +29,8 @@ test ('Success: Create a SQLStatement and bind duplicate parameters.', () => {
 	let sql = new SQLStatement(statement);
 	let expectedStatement = "SELECT * FROM test WHERE id = '319698b9-a5a1-52f1-b61c-9124f9ba1fd2' AND uuid = '319698b9-a5a1-52f1-b61c-9124f9ba1fd2'"; 
 	sql.bind("id","319698b9-a5a1-52f1-b61c-9124f9ba1fd2");
-	expect(sql.getPreparedStatement()).toEqual(expectedStatement);
 	//THEN
+	expect(sql.getPreparedStatement()).toEqual(expectedStatement);
 });
 
 test ('Success: Create a SQL SQLStatement and bind some parameters.', () => {
@@ -40,8 +40,8 @@ test ('Success: Create a SQL SQLStatement and bind some parameters.', () => {
 	let sql = new SQLStatement(statement);
 	let expectedStatement = "SELECT * FROM test WHERE id = '319698b9-a5a1-52f1-b61c-9124f9ba1fd2' AND nobind = :nobind"; 
 	sql.bind("id","319698b9-a5a1-52f1-b61c-9124f9ba1fd2");
-	expect(sql.getPreparedStatement()).toEqual(expectedStatement);
 	//THEN
+	expect(sql.getPreparedStatement()).toEqual(expectedStatement);
 });
 
 test ('Success: Create a SQL SQLStatement and bind reserved words (default, current_timestamp).', () => {
@@ -67,8 +67,8 @@ test ('Success: Create SQL Insert with null values.', () => {
 	sql.bind("id","319698b9-a5a1-52f1-b61c-9124f9ba1fd2");
 	sql.bind("value","Some value.");
 	sql.bind("nullvalue",null);
-	expect(sql.getPreparedStatement()).toEqual(expectedStatement);
 	//THEN
+	expect(sql.getPreparedStatement()).toEqual(expectedStatement);
 });
 
 test ('Success: Create SQL Insert with undefined/default values.', () => {
@@ -80,8 +80,8 @@ test ('Success: Create SQL Insert with undefined/default values.', () => {
 	sql.bind("id","319698b9-a5a1-52f1-b61c-9124f9ba1fd2");
 	sql.bind("value","Some value.");
 	sql.bind("defaultvalue",);
-	expect(sql.getPreparedStatement()).toEqual(expectedStatement);
 	//THEN
+	expect(sql.getPreparedStatement()).toEqual(expectedStatement);
 });
 
 

@@ -65,3 +65,56 @@ test ('DBObject.generateHash() success.', () => {
 	//WHEN
 	.toBe(hash);
 })
+
+
+/** SQL generation tests **/
+test ('Basic SQL generation tests.', () => {
+	//GIVEN
+	validDbTableName = "listing";
+	validDbTableColumns = ["column1","column2"];
+	validDbObject = new DBObject(validDbTableName, validDbTableColumns);
+
+	let expectedInsertStatement = "INSERT INTO listing (id, column1, column2) VALUES ('118cd9b3-7910-5b72-aeab-e148faa73c3e', default, default)";
+	let expectedSelectStatement = "SELECT column1, column2 FROM listing WHERE id='118cd9b3-7910-5b72-aeab-e148faa73c3e'";
+	let expectedDeleteStatement = "DELETE FROM listing WHERE id = '118cd9b3-7910-5b72-aeab-e148faa73c3e'";
+	let expectedUpdateStatement = "UPDATE listing SET column1 = default, column2 = default WHERE id='118cd9b3-7910-5b72-aeab-e148faa73c3e'";
+
+	//WHEN
+	let resultInsertStatement = validDbObject.generateInsertStatement();
+	let resultSelectStatement = validDbObject.generateSelectStatement();
+	let resultDeleteStatement = validDbObject.generateDeleteStatement();
+	let resultUpdateStatement = validDbObject.generateUpdateStatement();
+
+	//THEN
+	expect(resultInsertStatement).toBe(expectedInsertStatement);
+	expect(resultSelectStatement).toBe(expectedSelectStatement);
+	expect(resultDeleteStatement).toBe(expectedDeleteStatement);
+	expect(resultUpdateStatement).toBe(expectedUpdateStatement);
+});
+
+test ('Test SQL generation for odd values.', () => {
+	//GIVEN
+	validDbTableName = "listing";
+	validDbTableColumns = ["column1","column2"];
+	validDbObject = new DBObject(validDbTableName, validDbTableColumns);
+
+	let expectedInsertStatement = "INSERT INTO listing (id, column1, column2) VALUES ('2922730e-8c9f-5a11-bf00-975c983ccdc8', null, current_timestamp)";
+	let expectedSelectStatement = "SELECT column1, column2 FROM listing WHERE id='2922730e-8c9f-5a11-bf00-975c983ccdc8'";
+	let expectedDeleteStatement = "DELETE FROM listing WHERE id = '2922730e-8c9f-5a11-bf00-975c983ccdc8'";
+	let expectedUpdateStatement = "UPDATE listing SET column1 = null, column2 = current_timestamp WHERE id='2922730e-8c9f-5a11-bf00-975c983ccdc8'";
+
+	//WHEN
+	validDbObject.column1 = null;
+	validDbObject.column2 = "current_timestamp";
+
+	let resultInsertStatement = validDbObject.generateInsertStatement();
+	let resultSelectStatement = validDbObject.generateSelectStatement();
+	let resultDeleteStatement = validDbObject.generateDeleteStatement();
+	let resultUpdateStatement = validDbObject.generateUpdateStatement();
+
+	//THEN
+	expect(resultInsertStatement).toBe(expectedInsertStatement);
+	expect(resultSelectStatement).toBe(expectedSelectStatement);
+	expect(resultDeleteStatement).toBe(expectedDeleteStatement);
+	expect(resultUpdateStatement).toBe(expectedUpdateStatement);
+});
