@@ -9,7 +9,7 @@ test ('Create scraper and scrape.', async () => {
 	//GIVEN
 	scraper = new CraigslistScraper();
 	//WHEN
-	await scraper.scrape();
+	let result = await scraper.scrape();
 	//THEN
-	expect(scraper).not.toBe(null);
+	expect(result).not.toBe(null); //TODO: Should also expect result to have a size that is equal to the number of listings in a web page
 });
